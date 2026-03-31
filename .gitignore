@@ -1,0 +1,43 @@
+# Зависимости
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Сбилженные файлы
+dist/
+dist-ssr/
+*.local
+
+# Переменные окружения
+.env
+.env.local
+.env.*.local
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+
+# Временные файлы
+*.tmp
+*.bak
+*.log
+
+# Coverage
+coverage/
+
+# Yarn
+.yarn/cache/
+.yarn/install-state.gz
+
+# Debug
+debug.log
