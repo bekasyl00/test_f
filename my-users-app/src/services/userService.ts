@@ -1,36 +1,18 @@
-import axios, { AxiosError } from 'axios'
+import { supabase } from '@/services/supabase'
 import type { User } from '@/types/user'
 
-const api = axios.create({
-  baseURL: 'https://jsonplaceholder.typicode.com',
-  timeout: 8000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-})
-
-api.interceptors.response.use(
-  (response) => response,
-  (error: AxiosError) => {
-    if (error.code === 'ECONNABORTED') {
-      return Promise.reject(new Error('Превышено время ожидания запроса'))
-    }
-    if (!error.response) {
-      return Promise.reject(new Error('Нет соединения с сервером'))
-    }
-    const status = error.response.status
-    if (status === 404) return Promise.reject(new Error('Данные не найдены'))
-    if (status >= 500) return Promise.reject(new Error('Ошибка сервера'))
-    return Promise.reject(new Error(`Ошибка запроса: ${status}`))
-  }
-)
-
 export const userService = {
-  getAll(): Promise<User[]> {
-    return api.get<User[]>('/users').then((response) => response.data)
-  },
+  async getAll(): Promise<User[]> {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .order('created_at', { ascending: false })
 
-  getById(id: number): Promise<User> {
-    return api.get<User>(`/users/${id}`).then((response) => response.data)
+    if (error) {
+      console.error('Supabase error:', error)
+      throw new Error(`Ошибка загрузки данных: ${error.message}`)
+    }
+
+    return data as User[]
   },
 }

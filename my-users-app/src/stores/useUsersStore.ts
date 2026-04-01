@@ -28,10 +28,10 @@ export const useUsersStore = defineStore('users', () => {
     if (filter.value.criteria !== 'all' && filter.value.value) {
       result = result.filter((user) => {
         if (filter.value.criteria === 'city') {
-          return user.address.city === filter.value.value
+          return user.address_city === filter.value.value
         }
         if (filter.value.criteria === 'company') {
-          return user.company.name === filter.value.value
+          return user.company_name === filter.value.value
         }
         return true
       })
@@ -40,13 +40,17 @@ export const useUsersStore = defineStore('users', () => {
     return result
   })
 
-  const availableCities = computed<string[]>(() =>
-    [...new Set(users.value.map((u) => u.address.city))].sort()
-  )
+  // get non-null and unique cities
+  const availableCities = computed<string[]>(() => {
+    const cities = users.value.map((u) => u.address_city).filter(Boolean) as string[]
+    return [...new Set(cities)].sort()
+  })
 
-  const availableCompanies = computed<string[]>(() =>
-    [...new Set(users.value.map((u) => u.company.name))].sort()
-  )
+  // get non-null and unique companies
+  const availableCompanies = computed<string[]>(() => {
+    const companies = users.value.map((u) => u.company_name).filter(Boolean) as string[]
+    return [...new Set(companies)].sort()
+  })
 
   const totalCount = computed<number>(() => users.value.length)
   const filteredCount = computed<number>(() => filteredUsers.value.length)

@@ -1,10 +1,7 @@
 <template>
   <div class="search-bar">
-    <div class="search-input-wrapper">
-      <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="11" cy="11" r="8"/>
-        <path d="m21 21-4.35-4.35"/>
-      </svg>
+    <div class="search-input-wrapper glass-panel">
+      <Search class="search-icon" />
       <input
         v-model="localQuery"
         type="search"
@@ -20,13 +17,14 @@
         aria-label="Очистить поиск"
         @click="clearSearch"
       >
-        ✕
+        <X class="clear-icon" />
       </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { Search, X } from 'lucide-vue-next'
 import { useSearch } from '@/composables/useSearch'
 
 const { localQuery, clearSearch } = useSearch(350)
@@ -34,59 +32,80 @@ const { localQuery, clearSearch } = useSearch(350)
 
 <style scoped>
 .search-bar {
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
 .search-input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
+  transition: all 0.3s ease;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.search-input-wrapper:focus-within {
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2), var(--shadow-sm);
+  border-color: var(--primary);
+  transform: translateY(-1px);
 }
 
 .search-icon {
   position: absolute;
-  left: 14px;
-  color: #9ca3af;
+  left: 16px;
+  color: var(--text-muted);
   pointer-events: none;
   flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  transition: color 0.3s;
+}
+
+.search-input-wrapper:focus-within .search-icon {
+  color: var(--primary);
 }
 
 .search-input {
   width: 100%;
-  padding: 12px 44px 12px 44px;
-  font-size: 15px;
-  border: 1.5px solid #e5e7eb;
-  border-radius: 10px;
-  background: #fff;
+  padding: 16px 48px 16px 48px;
+  font-size: 16px;
+  background: transparent;
+  border: none;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
-}
-
-.search-input:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  color: var(--text-main);
 }
 
 .search-input::placeholder {
-  color: #9ca3af;
+  color: var(--text-muted);
+  opacity: 0.7;
 }
 
 .clear-btn {
   position: absolute;
   right: 12px;
-  background: none;
+  background: rgba(0,0,0,0.05);
   border: none;
   cursor: pointer;
-  color: #9ca3af;
-  font-size: 14px;
-  padding: 4px;
-  line-height: 1;
-  border-radius: 4px;
-  transition: color 0.15s;
+  color: var(--text-muted);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  padding: 0;
 }
 
 .clear-btn:hover {
-  color: #374151;
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--primary);
+  transform: scale(1.05);
+}
+
+.clear-icon {
+  width: 16px;
+  height: 16px;
 }
 </style>

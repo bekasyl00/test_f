@@ -1,7 +1,8 @@
 <template>
-  <div class="filter-panel">
+  <div class="filter-panel glass-panel">
     <div class="filter-group">
-      <label class="filter-label">Фильтр по:</label>
+      <Filter class="filter-icon" />
+      <span class="filter-label">Фильтр:</span>
       <div class="filter-tabs">
         <button
           v-for="tab in tabs"
@@ -16,13 +17,13 @@
       </div>
     </div>
 
-    <div v-if="activeCriteria !== 'all'" class="filter-select-group">
+    <div v-if="activeCriteria !== 'all'" class="filter-select-group animate-slide-in">
       <select
         class="filter-select"
         :value="activeValue"
         @change="handleValueChange"
       >
-        <option value="">— Все —</option>
+        <option value="">— Выбрать —</option>
         <option
           v-for="option in currentOptions"
           :key="option"
@@ -32,29 +33,21 @@
         </option>
       </select>
     </div>
-
-    <button
-      v-if="activeCriteria !== 'all' || activeValue"
-      class="reset-btn"
-      type="button"
-      @click="resetFilter"
-    >
-      Сбросить фильтры
-    </button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { Filter } from 'lucide-vue-next'
 import { useFilter } from '@/composables/useFilter'
 import type { FilterState } from '@/types/user'
 
-const { activeCriteria, activeValue, availableCities, availableCompanies, applyFilter, resetFilter } = useFilter()
+const { activeCriteria, activeValue, availableCities, availableCompanies, applyFilter } = useFilter()
 
 const tabs: { label: string; value: FilterState['criteria'] }[] = [
   { label: 'Все', value: 'all' },
-  { label: 'Город', value: 'city' },
-  { label: 'Компания', value: 'company' },
+  { label: '🏙 Город', value: 'city' },
+  { label: '🏢 Компания', value: 'company' },
 ]
 
 const currentOptions = computed<string[]>(() => {
@@ -78,81 +71,95 @@ function handleValueChange(event: Event): void {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 20px;
-  padding: 14px 16px;
-  background: #f9fafb;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding: 16px 20px;
+  border-radius: 16px;
 }
 
 .filter-group {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+}
+
+.filter-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--primary);
 }
 
 .filter-label {
-  font-size: 14px;
-  color: #6b7280;
-  white-space: nowrap;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-main);
 }
 
 .filter-tabs {
   display: flex;
-  gap: 6px;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.03);
+  padding: 4px;
+  border-radius: 20px;
 }
 
 .filter-tab {
-  padding: 6px 14px;
-  font-size: 13px;
-  border: 1.5px solid #e5e7eb;
-  border-radius: 20px;
-  background: #fff;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  border-radius: 16px;
   cursor: pointer;
-  transition: all 0.15s;
-  color: #374151;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--text-muted);
 }
 
 .filter-tab:hover {
-  border-color: #6366f1;
-  color: #6366f1;
+  color: var(--text-main);
 }
 
 .filter-tab.active {
-  background: #6366f1;
-  border-color: #6366f1;
-  color: #fff;
+  background: white;
+  color: var(--primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.filter-select-group {
+  position: relative;
+  min-width: 200px;
 }
 
 .filter-select {
-  padding: 7px 12px;
+  width: 100%;
+  padding: 10px 16px;
   font-size: 14px;
-  border: 1.5px solid #e5e7eb;
-  border-radius: 8px;
-  background: #fff;
+  font-weight: 500;
+  color: var(--text-main);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.8);
   cursor: pointer;
   outline: none;
-  min-width: 160px;
+  transition: all 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
 }
 
 .filter-select:focus {
-  border-color: #6366f1;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
-.reset-btn {
-  padding: 7px 14px;
-  font-size: 13px;
-  border: 1.5px solid #fca5a5;
-  border-radius: 8px;
-  background: #fff;
-  color: #ef4444;
-  cursor: pointer;
-  transition: all 0.15s;
-  margin-left: auto;
+.animate-slide-in {
+  animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.reset-btn:hover {
-  background: #fef2f2;
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 </style>

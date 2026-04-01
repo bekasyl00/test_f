@@ -1,25 +1,13 @@
-export interface Address {
-  street: string
-  suite: string
-  city: string
-  zipcode: string
-}
-
-export interface Company {
-  name: string
-  catchPhrase: string
-  bs: string
-}
-
 export interface User {
-  id: number
+  id: string
   name: string
   username: string
   email: string
-  phone: string
-  website: string
-  address: Address
-  company: Company
+  phone: string | null
+  website: string | null
+  address_city: string | null
+  company_name: string | null
+  created_at: string
 }
 
 export type FilterCriteria = 'all' | 'city' | 'company'

@@ -1,29 +1,36 @@
 <template>
   <div class="user-list-wrapper">
+    <!-- List Stats -->
     <div class="list-stats" v-if="users.length > 0 || store.searchQuery || store.filter.criteria !== 'all'">
       <span class="stats-text">
-        Показано {{ store.filteredCount }} из {{ store.totalCount }}
+        <span class="highlight">{{ store.filteredCount }}</span> найдено из <span class="highlight">{{ store.totalCount }}</span>
       </span>
     </div>
 
-    <div v-if="users.length === 0" class="empty-state">
-      <div class="empty-icon">🔍</div>
-      <p class="empty-title">Ничего не найдено</p>
-      <p class="empty-subtitle">Попробуйте изменить параметры поиска или фильтра</p>
+    <!-- Empty State -->
+    <div v-if="users.length === 0" class="empty-state glass-panel">
+      <div class="empty-icon-wrapper">
+        <Search class="empty-icon" />
+      </div>
+      <h3 class="empty-title">Ничего не найдено</h3>
+      <p class="empty-subtitle">Попробуйте изменить параметры поиска или сбросить фильтры</p>
       <button class="reset-all-btn" type="button" @click="store.resetFilters()">
-        Сбросить всё
+        <RotateCcw class="reset-icon" />
+        Сбросить фильтры
       </button>
     </div>
 
-    <ul v-else class="user-grid">
+    <!-- User Grid -->
+    <TransitionGroup v-else name="list" tag="ul" class="user-grid">
       <li v-for="user in users" :key="user.id" class="user-grid-item">
         <UserCard :user="user" />
       </li>
-    </ul>
+    </TransitionGroup>
   </div>
 </template>
 
 <script setup lang="ts">
+import { Search, RotateCcw } from 'lucide-vue-next'
 import UserCard from './UserCard.vue'
 import { useUsersStore } from '@/stores/useUsersStore'
 import type { User } from '@/types/user'
@@ -39,12 +46,19 @@ const store = useUsersStore()
 }
 
 .list-stats {
-  margin-bottom: 16px;
+  margin-bottom: 24px;
+  animation: fadeIn 0.5s ease;
 }
 
 .stats-text {
-  font-size: 13px;
-  color: #6b7280;
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.highlight {
+  color: var(--primary);
+  font-weight: 700;
 }
 
 .user-grid {
@@ -52,49 +66,98 @@ const store = useUsersStore()
   padding: 0;
   margin: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
 }
 
 .user-grid-item {
-  display: contents;
+  display: flex;
+}
+
+/* Transitions for list */
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.4s ease;
+}
+.list-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.list-leave-to {
+  opacity: 0;
+  transform: scale(0.9);
 }
 
 .empty-state {
   text-align: center;
-  padding: 60px 20px;
-  color: #6b7280;
+  padding: 80px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.5s ease;
+}
+
+.empty-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
 }
 
 .empty-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
+  width: 40px;
+  height: 40px;
+  color: var(--primary);
 }
 
 .empty-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #374151;
-  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0 0 12px;
 }
 
 .empty-subtitle {
-  font-size: 14px;
-  margin: 0 0 20px;
+  font-size: 15px;
+  color: var(--text-muted);
+  margin: 0 0 32px;
+  max-width: 320px;
 }
 
 .reset-all-btn {
-  padding: 8px 20px;
-  background: #6366f1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--primary);
   color: #fff;
   border: none;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
 .reset-all-btn:hover {
-  background: #4f46e5;
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+}
+
+.reset-icon {
+  width: 18px;
+  height: 18px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
